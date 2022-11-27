@@ -1,44 +1,37 @@
 import './styles/cssReset.css'
 import './styles/helper.css'
 import './styles/style.css'
-import { add as addProject, getSelectedProject, getProjects, SetSelectedProject } from './project'
-import { addTaskToProject } from './tasks'
-import { taskFormHandling, modalHandling, projectInputHandlig, displayProjects, displayTasks } from './uiModule'
+import { addTaskToProject, remove as removeTask, update as updateTask } from './modules/tasks'
+import { add as addProject, remove as removeProject, getSelectedProject, getProjects, SetSelectedProject } from './modules/project'
+import { taskFormHandling, modalHandling, projectInputHandlig, displayProjects, displayTasks, showProjectTitle } from './modules/uiModule'
 import pubsub from 'pubsub.js'
 
 const { openModal, closeModal } = modalHandling()
-const { getTaskFormData, clearTaskFormData } = taskFormHandling()
+const { getTaskFormData, clearTaskFormData, setEditTaskFormData } = taskFormHandling()
 const { getProjectInputValue, clearProjectInputValue } = projectInputHandlig()
+let isEditTask = false
+let selectedTaskToEdit = {}
 
-pubsub.subscribe('select/project', function(project) {
-  SetSelectedProject(project)
-  displayTasks(getSelectedProject().tasks)
-});
+pubsub.subscribe('select/project', selectProject)
+pubsub.subscribe('remove/task', removeTaskHandler)
+pubsub.subscribe('open/editTask', editTaskHndler)
 
 function addEventListeners() {
   const addProjectButton = document.querySelector('#addProject')
   const openAddTaskModal = document.querySelector('.openAddTaskModal')
   const addTaskButton = document.querySelector('#add-task-button')
+  const deleteProject = document.querySelector('.delete-project')
 
-  addProjectButton.addEventListener('click', () => {
-    const title = getProjectInputValue()
-    if(!title) return
-    addProject(title)
-    clearProjectInputValue()
-    displayProjects(getProjects())
+  addProjectButton.addEventListener('click', addProjectHandler)
+
+  openAddTaskModal.addEventListener('click', () => {
+    clearTaskFormData()
+    openModal()
   })
 
-  openAddTaskModal.addEventListener('click', openModal)
+  addTaskButton.addEventListener('click', addEditTaskHanler)
 
-  addTaskButton.addEventListener('click', () => {
-    const data = getTaskFormData()
-
-    if(addTaskToProject(getSelectedProject().tasks, data)) {
-      closeModal()
-      clearTaskFormData()
-      displayTasks(getSelectedProject().tasks)
-    }
-  }) 
+  deleteProject.addEventListener('click', removeProjectHandler)
 }
 
 addEventListeners()
@@ -46,3 +39,60 @@ addEventListeners()
 displayProjects(getProjects())
 
 displayTasks(getProjects()[0].tasks)
+
+showProjectTitle(getProjects()[0].title)
+
+function selectProject(project) {
+  SetSelectedProject(project)
+  displayTasks(getSelectedProject().tasks)
+  showProjectTitle(getSelectedProject().title)
+}
+
+function removeProjectHandler() {
+  removeProject()
+  displayProjects(getProjects())
+
+  if(!getProjects().length) {
+    SetSelectedProject(null)
+    displayTasks(null)
+    showProjectTitle('ther is no project')
+    return
+  }
+
+  SetSelectedProject(getProjects()[0])
+  showProjectTitle(getSelectedProject().title)
+  displayTasks(getSelectedProject().tasks)
+}
+
+function removeTaskHandler(task) {
+  removeTask(getSelectedProject(), task)
+  displayTasks(getSelectedProject().tasks)
+}
+
+function addProjectHandler() {
+  const projectTitle = getProjectInputValue()
+  if(!projectTitle) return
+  addProject(projectTitle)
+  clearProjectInputValue()
+  displayProjects(getProjects())
+}
+
+function addEditTaskHanler() {
+  const data = getTaskFormData()
+
+  if(isEditTask) {
+    updateTask(getSelectedProject().tasks, selectedTaskToEdit, data)
+    isEditTask = false
+    selectedTaskToEdit = {}
+  } else if (addTaskToProject(getSelectedProject().tasks, data)) {}
+
+  closeModal()
+  displayTasks(getSelectedProject().tasks)
+}
+
+function editTaskHndler(task) {
+  isEditTask = true
+  selectedTaskToEdit = task
+  setEditTaskFormData(task)
+  openModal()
+}

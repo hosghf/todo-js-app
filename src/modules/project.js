@@ -6,7 +6,7 @@ const projects = [
         title: "read a book haha",
         description: "this task is good for you",
         dueDate: "1/2/2022 08:22",
-        priority: 'high'
+        priority: 'medium'
       }
     ] 
   }
@@ -24,8 +24,9 @@ function getProjects() {
   return projects
 }
 
-function remove(projects, index) {
-  
+function remove() {
+  const index = projects.findIndex((project) => project === selectedProject)
+  projects.splice(index, 1)
 }
 
 function getSelectedProject() {

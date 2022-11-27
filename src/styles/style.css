@@ -29,17 +29,19 @@ h4 {
 }
 
 .project-item {
-  display: flex;
-  justify-content: space-between;
-  width: 40%;
-  margin: 20px 0;
+  border: 1px solid gray;
+  padding: 5px;
+  cursor: pointer;
 }
 
 .task {
   display: flex;
   justify-content: space-between;
   width: 55%;
-  margin: 20px 0;
+  margin: 10px 0;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .modal {
