@@ -1,9 +1,11 @@
 import './styles/cssReset.css'
 import './styles/helper.css'
 import './styles/style.css'
-import { addTaskToProject, remove as removeTask, update as updateTask } from './modules/tasks'
+import '@fortawesome/fontawesome-free/js/fontawesome'
+import '@fortawesome/fontawesome-free/js/solid'
+import { addTaskToProject, remove as removeTask, update as updateTask, toggleTaskDone } from './modules/tasks'
 import { add as addProject, remove as removeProject, getSelectedProject, getProjects, SetSelectedProject } from './modules/project'
-import { taskFormHandling, modalHandling, projectInputHandlig, displayProjects, displayTasks, showProjectTitle } from './modules/uiModule'
+import { taskFormHandling, modalHandling, projectInputHandlig, displayProjects, displayTasks, showProjectTitle, selectDefualtProject } from './modules/uiModule'
 import pubsub from 'pubsub.js'
 
 const { openModal, closeModal } = modalHandling()
@@ -14,13 +16,15 @@ let selectedTaskToEdit = {}
 
 pubsub.subscribe('select/project', selectProject)
 pubsub.subscribe('remove/task', removeTaskHandler)
-pubsub.subscribe('open/editTask', editTaskHndler)
+pubsub.subscribe('open/editTask', editTaskFormHndler)
+pubsub.subscribe('toggle/taskDone', (task) => {toggleTaskDone(task); storeProjects()})
 
 function addEventListeners() {
   const addProjectButton = document.querySelector('#addProject')
   const openAddTaskModal = document.querySelector('.openAddTaskModal')
   const addTaskButton = document.querySelector('#add-task-button')
   const deleteProject = document.querySelector('.delete-project')
+  const closeModalButton = document.querySelector('.close')
 
   addProjectButton.addEventListener('click', addProjectHandler)
 
@@ -32,6 +36,8 @@ function addEventListeners() {
   addTaskButton.addEventListener('click', addEditTaskHanler)
 
   deleteProject.addEventListener('click', removeProjectHandler)
+
+  closeModalButton.addEventListener('click', closeModal)
 }
 
 function selectProject(project) {
@@ -60,6 +66,7 @@ function removeProjectHandler() {
 function removeTaskHandler(task) {
   removeTask(getSelectedProject(), task)
   displayTasks(getSelectedProject().tasks)
+  storeProjects()
 }
 
 function addProjectHandler() {
@@ -85,7 +92,7 @@ function addEditTaskHanler() {
   storeProjects()
 }
 
-function editTaskHndler(task) {
+function editTaskFormHndler(task) {
   isEditTask = true
   selectedTaskToEdit = task
   setEditTaskFormData(task)
@@ -102,6 +109,7 @@ function initializeApp() {
     displayProjects(getProjects()) 
     displayTasks(getProjects()[0].tasks)
     showProjectTitle(getProjects()[0].title)
+    selectDefualtProject()
   }
 }
 

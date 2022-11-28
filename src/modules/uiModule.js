@@ -1,4 +1,7 @@
 import pubsub from 'pubsub.js'
+import datepicker from 'js-datepicker'
+import 'js-datepicker/dist/datepicker.min.css';
+
 
 function modalHandling() {
   const modal = document.querySelector('.modal')
@@ -43,8 +46,11 @@ function taskFormHandling() {
     highPriority: document.querySelector('#high-priority'),
     lowPriority: document.querySelector('#low-priority'),
     mediumPriority: document.querySelector('#medium-priority'),
-    submitButton: document.querySelector('#add-task-button')
   }
+
+  datepicker(taskForm.dueDate, {
+    formatter: (input, date) => input.value = date.toLocaleDateString()
+  })
   
   function getTaskFormData() {
     return { 
@@ -60,7 +66,6 @@ function taskFormHandling() {
     taskForm.description.value = ""
     taskForm.dueDate.value = ""
     taskForm.lowPriority.checked = true
-    taskForm.submitButton.innerText = 'add task'
   }
 
   function setEditTaskFormData(data) {
@@ -71,9 +76,7 @@ function taskFormHandling() {
     if(data.priority === 'medium')
       taskForm.mediumPriority.checked = true
     else if(data.priority === 'high')
-      taskForm.highPriority.checked = true
-    
-    taskForm.submitButton.innerText = 'edit task'
+      taskForm.highPriority.checked = true    
   }
 
   return { getTaskFormData, clearTaskFormData, setEditTaskFormData }
@@ -95,10 +98,24 @@ function displayProjects(projects) {
     </div>`
 
     const node = new DOMParser().parseFromString(template, "text/html")
-    node.body.firstChild.addEventListener('click', () => pubsub.publish('select/project', [projects[index]]))
+    node.body.firstChild.addEventListener('click', function toggleSelected() {
+      pubsub.publish('select/project', [projects[index]])
 
-    projectsContainer.appendChild(node.body)
+      const allProject = document.querySelectorAll('.project-item')
+      allProject.forEach(element => {
+        element.classList.remove('selected-project')
+      });
+    
+      this.classList.add('selected-project')
+    })
+
+    projectsContainer.appendChild(node.body.firstChild)
   }
+}
+
+function selectDefualtProject() {
+  const projectsContainer = document.querySelector('#projects-container')
+  projectsContainer.firstChild.classList.add('selected-project')
 }
 
 function displayTasks(tasks) {
@@ -114,7 +131,7 @@ function displayTasks(tasks) {
     const template = `
       <div class="task">
         <div>
-          <input type="checkbox">
+          <input class="check-task" type="checkbox">
           <label for="">${task.title}</label>
         </div>
 
@@ -125,12 +142,15 @@ function displayTasks(tasks) {
       </div>`
 
     const node = new DOMParser().parseFromString(template, "text/html")
-    const deleteTaskButton = node.querySelector('.delete-task-button')
-    const editTaskButton = node.querySelector('.edit-task-button')
+    const deleteTaskButton = node.body.querySelector('.delete-task-button')
+    const editTaskButton = node.body.querySelector('.edit-task-button')
+    const checkTask = node.body.querySelector('.check-task')
     deleteTaskButton.addEventListener('click', () => pubsub.publish('remove/task', [task]))
     editTaskButton.addEventListener('click', () => pubsub.publish('open/editTask', [task]))
-    
-    tasksContainer.appendChild(node.body)
+    checkTask.onchange = () => pubsub.publish('toggle/taskDone', [task])
+    checkTask.checked = task.done
+
+    tasksContainer.appendChild(node.body.firstChild)
   }
 }
 
@@ -145,5 +165,6 @@ export {
   taskFormHandling,
   displayProjects,
   displayTasks,
-  showProjectTitle
+  showProjectTitle,
+  selectDefualtProject
 }

@@ -8,9 +8,18 @@ h4 {
   font-weight: 700;
 }
 
+.input {
+  padding: 5px;
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+}
+
 .container {
   display: flex;
-  width: 80%;
+  width: 85%;
   height: 100%;
   margin: auto;
 }
@@ -32,6 +41,10 @@ h4 {
   border: 1px solid gray;
   padding: 5px;
   cursor: pointer;
+}
+
+.selected-project {
+  border: 1px solid red;
 }
 
 .task {
@@ -66,8 +79,16 @@ h4 {
 .modal .modal-content .close {
   float: right;
   margin-top: -20px;
+  cursor: pointer;
 }
 
 .modal .modal-content .label {
   width: 80px;
+  font-weight: 700;
+  padding: 3px 0;
+}
+
+.modal .modal-content .form-input{
+  width: 75%;
+  padding: 3px 0;
 }

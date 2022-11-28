@@ -12,9 +12,9 @@
         <h1 class="my-1">projects</h1>
 
         <div class="d-flex justify-content-between">
-          <input id="project-input" type="text">
+          <input id="project-input" class="input" type="text">
 
-          <button id="addProject">+</button>
+          <button id="addProject"><i class="fa fa-plus"></i></button>
         </div>
 
         <div id="projects-container"></div>
@@ -36,21 +36,21 @@
 
         <div class="modal d-none">
           <div class="modal-content">
-            <div class="close">x</div>
+            <div class="close"><i class="fa fa-close"></i></div>
 
             <div class="row m-1">
               <label class="label" for="title">title</label>
-              <input id="title" type="text">
+              <input id="title" class="form-input" type="text">
             </div>
 
             <div class="row m-1">
               <label class="label" for="description">description</label>
-              <input id="description" type="text">
+              <input id="description" class="form-input" type="text">
             </div>
 
             <div class="row m-1">
               <label class="label" for="due-date">due date</label>
-              <input id="due-date" type="text">
+              <input id="due-date" class="form-input" type="text">
             </div>
 
             <h4 class="m-2">priority</h4>
@@ -65,7 +65,9 @@
               <input id="high-priority" type="radio" name="priority" value="high" class="mr-1">
             </div>
 
-            <button id="add-task-button">add task</button>
+            <button id="add-task-button">
+              <i class="fa fa-plus"></i>
+            </button>
           </div>
         </div>
       </div>

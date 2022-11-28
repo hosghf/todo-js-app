@@ -1,9 +1,12 @@
 function addTaskToProject(tasks ,data) {
+  if(!data.title) return false
+
   tasks.push({
     title: data.title, 
     description: data.description,
     dueDate: data.dueDate,
-    priority: data.priority
+    priority: data.priority,
+    done: false
   })
 
   return true
@@ -16,7 +19,8 @@ function update(tasks, oldTask, newData) {
     task.title = newData.title
     task.description = newData.description
     task.dueDate = newData.dueDate
-    task.priority = newData.priority
+    task.priority = newData.priority,
+    task.done = newData.done
   }
 }
 
@@ -25,8 +29,8 @@ function remove(project, data) {
   project.tasks.splice(index, 1)
 }
 
-function get() {
- 
+function toggleTaskDone(task) {
+  task.done = !task.done
 }
 
-export { remove, get, addTaskToProject, update }
+export { remove, addTaskToProject, update, toggleTaskDone }
