@@ -1,16 +1,5 @@
-const projects = [
-  {
-    title: 'folan',
-    tasks: [
-      {
-        title: "read a book haha",
-        description: "this task is good for you",
-        dueDate: "1/2/2022 08:22",
-        priority: 'medium'
-      }
-    ] 
-  }
-]
+const projects =JSON.parse(localStorage.getItem("projects")) || []
+
 let selectedProject = projects[0]
 
 function add(title) {

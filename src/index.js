@@ -34,14 +34,6 @@ function addEventListeners() {
   deleteProject.addEventListener('click', removeProjectHandler)
 }
 
-addEventListeners()
-
-displayProjects(getProjects())
-
-displayTasks(getProjects()[0].tasks)
-
-showProjectTitle(getProjects()[0].title)
-
 function selectProject(project) {
   SetSelectedProject(project)
   displayTasks(getSelectedProject().tasks)
@@ -62,6 +54,7 @@ function removeProjectHandler() {
   SetSelectedProject(getProjects()[0])
   showProjectTitle(getSelectedProject().title)
   displayTasks(getSelectedProject().tasks)
+  storeProjects()
 }
 
 function removeTaskHandler(task) {
@@ -75,6 +68,7 @@ function addProjectHandler() {
   addProject(projectTitle)
   clearProjectInputValue()
   displayProjects(getProjects())
+  storeProjects()
 }
 
 function addEditTaskHanler() {
@@ -88,6 +82,7 @@ function addEditTaskHanler() {
 
   closeModal()
   displayTasks(getSelectedProject().tasks)
+  storeProjects()
 }
 
 function editTaskHndler(task) {
@@ -96,3 +91,18 @@ function editTaskHndler(task) {
   setEditTaskFormData(task)
   openModal()
 }
+
+function storeProjects() {
+  localStorage.setItem('projects',JSON.stringify(getProjects()))
+}
+
+function initializeApp() {
+  addEventListeners()
+  if(getProjects().length) {
+    displayProjects(getProjects()) 
+    displayTasks(getProjects()[0].tasks)
+    showProjectTitle(getProjects()[0].title)
+  }
+}
+
+initializeApp()
