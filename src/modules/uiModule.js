@@ -113,11 +113,6 @@ function displayProjects(projects) {
   }
 }
 
-function selectDefualtProject() {
-  const projectsContainer = document.querySelector('#projects-container')
-  projectsContainer.firstChild.classList.add('selected-project')
-}
-
 function displayTasks(tasks) {
   const tasksContainer = document.querySelector('#task-container')
   tasksContainer.innerText = ""
@@ -159,6 +154,26 @@ function showProjectTitle(title) {
   titleElelemnt.innerText = title
 }
 
+function selectDefualtProject() {
+  const projectsContainer = document.querySelector('#projects-container')
+  projectsContainer.firstChild.classList.add('selected-project')
+}
+
+function selectLastProjectUi() {
+  const projectsContainer = document.querySelector('#projects-container')
+  projectsContainer.lastChild.classList.add('selected-project')
+}
+
+function setAddTaskDisabled() {
+  const openAddTaskModal = document.querySelector('.openAddTaskModal')
+  openAddTaskModal.disabled = true
+}
+
+function setAddTaskActive() {
+  const openAddTaskModal = document.querySelector('.openAddTaskModal')
+  openAddTaskModal.disabled = false
+}
+
 export {
   modalHandling,
   projectInputHandlig,
@@ -166,5 +181,8 @@ export {
   displayProjects,
   displayTasks,
   showProjectTitle,
-  selectDefualtProject
+  selectDefualtProject,
+  selectLastProjectUi,
+  setAddTaskDisabled,
+  setAddTaskActive
 }

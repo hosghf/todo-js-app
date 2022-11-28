@@ -3,10 +3,19 @@ import './styles/helper.css'
 import './styles/style.css'
 import '@fortawesome/fontawesome-free/js/fontawesome'
 import '@fortawesome/fontawesome-free/js/solid'
+import pubsub from 'pubsub.js'
 import { addTaskToProject, remove as removeTask, update as updateTask, toggleTaskDone } from './modules/tasks'
 import { add as addProject, remove as removeProject, getSelectedProject, getProjects, SetSelectedProject } from './modules/project'
-import { taskFormHandling, modalHandling, projectInputHandlig, displayProjects, displayTasks, showProjectTitle, selectDefualtProject } from './modules/uiModule'
-import pubsub from 'pubsub.js'
+import { taskFormHandling,
+        modalHandling, 
+        projectInputHandlig, 
+        displayProjects, 
+        displayTasks, 
+        showProjectTitle,
+        selectDefualtProject,
+        setAddTaskDisabled, 
+        setAddTaskActive, 
+        selectLastProjectUi } from './modules/uiModule'
 
 const { openModal, closeModal } = modalHandling()
 const { getTaskFormData, clearTaskFormData, setEditTaskFormData } = taskFormHandling()
@@ -44,6 +53,7 @@ function selectProject(project) {
   SetSelectedProject(project)
   displayTasks(getSelectedProject().tasks)
   showProjectTitle(getSelectedProject().title)
+  setAddTaskActive()
 }
 
 function removeProjectHandler() {
@@ -54,6 +64,8 @@ function removeProjectHandler() {
     SetSelectedProject(null)
     displayTasks(null)
     showProjectTitle('ther is no project')
+    storeProjects()
+    setAddTaskDisabled()
     return
   }
 
@@ -75,6 +87,10 @@ function addProjectHandler() {
   addProject(projectTitle)
   clearProjectInputValue()
   displayProjects(getProjects())
+  SetSelectedProject(getProjects()[getProjects().length - 1])
+  displayTasks(getSelectedProject())
+  selectLastProjectUi()
+  setAddTaskActive()
   storeProjects()
 }
 
@@ -110,6 +126,8 @@ function initializeApp() {
     displayTasks(getProjects()[0].tasks)
     showProjectTitle(getProjects()[0].title)
     selectDefualtProject()
+  } else {
+    setAddTaskDisabled()
   }
 }
 
